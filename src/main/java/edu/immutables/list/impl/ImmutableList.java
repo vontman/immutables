@@ -3,6 +3,7 @@ package edu.immutables.list.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -157,12 +158,12 @@ public interface ImmutableList<T> extends Iterable<T> {
     /**
      * Reduce the given list to a certain value.
      *
-     * @param sup supplier for the zero element to start with.
+     * @param zero the first element to start the reduce with.
      * @param redFn reducing function
      * @param <U> type of the reduced result
      * @return a final result of the reduction of the list
      */
-    <U> U reduce(Supplier<? extends U> sup, BiFunction<U, ? super T,U> redFn);
+    <U> U reduce(U zero, BiFunction<? super U, ? super T,? extends U> redFn);
 
     /**
      * Find if any element in the list matches a given condition.
@@ -201,8 +202,9 @@ public interface ImmutableList<T> extends Iterable<T> {
      *         collection
      */
     static <T> ImmutableList<T> of(Collection<T> collection) {
+        final ImmutableList<T> empty = new Empty<>();
         return collection.stream()
-                         .reduce((ImmutableList<T>)new Empty<>(),
+                         .reduce(empty,
                                  ImmutableList::add,
                                  ImmutableList::append);
     }
@@ -246,7 +248,7 @@ public interface ImmutableList<T> extends Iterable<T> {
 
     }
 
-    // TODO should be private scence java 9 now support private static methods in interfaces
+    // TODO should be private since java 9 now support private static methods in interfaces
     static <T> ImmutableList<T> reverse(ImmutableList<T> toBeReversed, ImmutableList<T> currentlyReversed) {
         if (toBeReversed.isEmpty())
             return currentlyReversed;

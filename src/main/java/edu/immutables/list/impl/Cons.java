@@ -109,9 +109,9 @@ public class Cons<T> implements ImmutableList<T> {
     }
 
     @Override
-    public <U> U reduce(Supplier<? extends U> sup, BiFunction<? super U, ? super T, ? extends U> redFn) {
+    public <U> U reduce(U zero, BiFunction<? super U, ? super T, ? extends U> redFn) {
         return tail.reduce(
-                () -> redFn.apply(sup.get(), head),
+                redFn.apply(zero, head),
                 redFn);
     }
 

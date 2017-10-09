@@ -82,8 +82,8 @@ public class Empty<T> implements ImmutableList<T> {
     }
 
     @Override
-    public <U> U reduce(Supplier<? extends U> sup, BiFunction<? super U, ? super T, ? extends U> redFn) {
-        return sup.get();
+    public <U> U reduce(U zero, BiFunction<? super U, ? super T, ? extends U> redFn) {
+        return zero;
     }
 
     @Override
