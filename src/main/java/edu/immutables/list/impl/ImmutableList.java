@@ -2,12 +2,9 @@ package edu.immutables.list.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Interface for representing an Immutable List
@@ -233,6 +230,24 @@ public interface ImmutableList<T> extends Iterable<T> {
      */
     default boolean isEmpty() {
         return size() == 0;
+    }
+
+    /**
+     *
+     * @return true if the list is not empty, false otherwise
+     */
+    default boolean nonEmpty() {
+        return !isEmpty();
+    }
+
+    /**
+     * Get an empty list instance.
+     *
+     * @param <T> type of empty list
+     * @return a new instance of the empty list
+     */
+    static <T> ImmutableList<T> emptyList() {
+        return new Empty<>();
     }
 
     /**
