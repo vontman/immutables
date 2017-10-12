@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static edu.immutables.list.impl.ImmutableList.reverse;
 
@@ -41,7 +41,7 @@ public class Cons<T> implements ImmutableList<T> {
     }
 
     @Override
-    public ImmutableList<T> add(T t) {
+    public ImmutableList<T> addHead(T t) {
         return new Cons<>(t, this);
     }
 
@@ -123,6 +123,12 @@ public class Cons<T> implements ImmutableList<T> {
     @Override
     public boolean allMatch(Predicate<? super T> t) {
         return t.test(head) && tail.allMatch(t);
+    }
+
+    @Override
+    public Stream<T> stream() {
+        return Stream.concat(
+                Stream.of(head), tail.stream());
     }
 
     @Override

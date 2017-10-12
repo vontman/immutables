@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Empty<T> implements ImmutableList<T> {
     @Override
@@ -23,7 +23,7 @@ public class Empty<T> implements ImmutableList<T> {
     }
 
     @Override
-    public ImmutableList<T> add(T t) {
+    public ImmutableList<T> addHead(T t) {
         return new Cons<>(t);
     }
 
@@ -94,6 +94,11 @@ public class Empty<T> implements ImmutableList<T> {
     @Override
     public boolean allMatch(Predicate<? super T> t) {
         return true;
+    }
+
+    @Override
+    public Stream<T> stream() {
+        return Stream.empty();
     }
 
     @Override

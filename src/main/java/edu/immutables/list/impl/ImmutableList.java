@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Interface for representing an Immutable List
@@ -17,35 +18,38 @@ public interface ImmutableList<T> extends Iterable<T> {
 
     /**
      * Get element at the given index.
-     *
+     * <p>
      * <p>
      * The running time for this operation is O(n)
      * </p>
+     *
      * @param ind index of the element to retrieve from the list
      * @return the target element
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException .
      */
     T get(int ind);
 
     /**
      * Get the first element in the list.
-     *
+     * <p>
      * <p>
      * Running time of this operation is O(1)
      * </p>
+     *
      * @return head of the list
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException .
      */
     T getHead();
 
     /**
      * Get a new list after removing the head of the current list.
-     *
+     * <p>
      * <p>
      * Running time of this operation is O(1)
      * </p>
+     *
      * @return rest of the list
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException .
      */
     ImmutableList<T> getTail();
 
@@ -55,7 +59,7 @@ public interface ImmutableList<T> extends Iterable<T> {
      * @param t element to add to the head of the list
      * @return a new list with this element added to the beginning
      */
-    default ImmutableList<T> add(T t) {
+    default ImmutableList<T> addHead(T t) {
         return new Cons<>(t, this);
     }
 
@@ -64,17 +68,18 @@ public interface ImmutableList<T> extends Iterable<T> {
      *
      * @param ind index of element to remove
      * @return a new list with the element at the given index is removed
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException .
      */
     ImmutableList<T> removeAt(int ind);
 
     /**
      * Remove the first element equals a given target from the list.
-     *
+     * <p>
      * <p>
      * This method will remove the first occurrence of the given element,
      * if the element doesn't exist in the list nothing happens
      * </p>
+     *
      * @param t element to remove
      * @return a new list with this element removed
      */
@@ -84,7 +89,7 @@ public interface ImmutableList<T> extends Iterable<T> {
      * Apply a transformation function over the elements of the list
      * and return a new list with the transformed elements.
      *
-     * @param f transformation function
+     * @param f   transformation function
      * @param <U> type of new elements
      * @return a new list with the transformed elements
      */
@@ -94,7 +99,7 @@ public interface ImmutableList<T> extends Iterable<T> {
      * Apply a transformation function over the elements of the list,
      * then it will flatten the resulting list to one single list.
      *
-     * @param f transformation function
+     * @param f   transformation function
      * @param <U> type of elements in the new list
      * @return a new list after applying transformations and flattening the list
      */
@@ -123,7 +128,7 @@ public interface ImmutableList<T> extends Iterable<T> {
      *
      * @param length elements count to get from the beginning of the list
      * @return a list containing the given count elements taken from the beginning
-     *         of this list
+     * of this list
      */
     ImmutableList<T> take(int length);
 
@@ -155,19 +160,19 @@ public interface ImmutableList<T> extends Iterable<T> {
     /**
      * Reduce the given list to a certain value.
      *
-     * @param zero the first element to start the reduce with.
+     * @param zero  the first element to start the reduce with.
      * @param redFn reducing function
-     * @param <U> type of the reduced result
+     * @param <U>   type of the reduced result
      * @return a final result of the reduction of the list
      */
-    <U> U reduce(U zero, BiFunction<? super U, ? super T,? extends U> redFn);
+    <U> U reduce(U zero, BiFunction<? super U, ? super T, ? extends U> redFn);
 
     /**
      * Find if any element in the list matches a given condition.
      *
      * @param p condition to test
      * @return true if any element in the list matches the given
-     *         condition, false otherwise
+     * condition, false otherwise
      */
     boolean anyMatch(Predicate<? super T> p);
 
@@ -176,13 +181,14 @@ public interface ImmutableList<T> extends Iterable<T> {
      *
      * @param p condition to test
      * @return true if all the elements in the list matches the condition,
-     *         false otherwise.
+     * false otherwise.
      */
     boolean allMatch(Predicate<? super T> p);
 
     /**
      * Test if all the elements in the list not matching the given
      * condition.
+     *
      * @param p condition to test with
      * @return true if no element matches the given condition, false otherwise
      */
@@ -191,25 +197,31 @@ public interface ImmutableList<T> extends Iterable<T> {
     }
 
     /**
+     * @return an instance of {@link Stream} holding the elements in the list.
+     */
+    Stream<T> stream();
+
+    /**
      * Factory method to build an ImmutableList from a given collection.
      *
      * @param collection collection to build from
-     * @param <T> type of elements in the collection
+     * @param <T>        type of elements in the collection
      * @return a new ImmutableList of the elements in the given
-     *         collection
+     * collection
      */
     static <T> ImmutableList<T> of(Collection<T> collection) {
         final ImmutableList<T> empty = new Empty<>();
-        return collection.stream()
-                         .reduce(empty,
-                                 ImmutableList::add,
-                                 ImmutableList::append);
+        return reverse(
+                collection.stream()
+                        .reduce(empty,
+                                ImmutableList::addHead,
+                                ImmutableList::append));
     }
 
     /**
      * Factory method to build an ImmutableList from a multiple arguments.
      *
-     * @param t multiple arguments
+     * @param t   multiple arguments
      * @param <T> type of multiple arguments
      * @return a new ImmutableList of the given elements
      */
@@ -219,13 +231,11 @@ public interface ImmutableList<T> extends Iterable<T> {
     }
 
     /**
-     *
      * @return size of the list
      */
     int size();
 
     /**
-     *
      * @return true if the list is empty, false otherwise
      */
     default boolean isEmpty() {
@@ -233,7 +243,6 @@ public interface ImmutableList<T> extends Iterable<T> {
     }
 
     /**
-     *
      * @return true if the list is not empty, false otherwise
      */
     default boolean nonEmpty() {
@@ -254,9 +263,9 @@ public interface ImmutableList<T> extends Iterable<T> {
      * Reverse a given list.
      *
      * @param list list to reverse
-     * @param <T> type of elements in the list
+     * @param <T>  type of elements in the list
      * @return a new ImmutableList with the same elements as the
-     *         given list but in a reverse order
+     * given list but in a reverse order
      */
     static <T> ImmutableList<T> reverse(final ImmutableList<T> list) {
         return reverse(list, new Empty<>());
