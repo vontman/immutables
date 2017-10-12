@@ -96,8 +96,6 @@ public class Cons<T> implements ImmutableList<T> {
 
     @Override
     public ImmutableList<T> append(ImmutableList<T> t) {
-        if (size == 1)
-            return new Cons<>(head, t);
         return new Cons<>(head, tail.append(t));
     }
 
